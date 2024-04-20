@@ -1,0 +1,38 @@
+﻿@using BusinessContactsPlatform.Data.Entities
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<BusinessContactsPlatform.Data.Entities.Event>
+@inject UserManager<AppUser> _userManager;
+@{
+    var user = await _userManager.GetUserAsync(User);
+}
+<h2>Events</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card rounded">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">Start Date: @item.StartDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                    <p class="card-text">End Date: @item.EndDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                    <p class="card-text">Location: @item.Location</p>
+                    @if (user.Id == item.Organizer)
+                    {
+                        <a href="@Url.Action("Edit", "Event", new { id = item.Id })" class="btn btn-primary">Edit</a>
+                        <a href="@Url.Action("Details", "Event", new { id = item.Id })" class="btn btn-primary">View</a> 
+                        <a href="@Url.Action("Join", "Event", new { id = item.Id })" class="btn btn-primary">Join</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="btn btn-success">Join</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
