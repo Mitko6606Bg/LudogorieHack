@@ -1,0 +1,40 @@
+﻿@using BusinessContactsPlatform.ViewModels
+@model AccountViewModel
+
+<div class="container mt-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title">Profile</h2>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Username:</h5>
+                    <p>@Model.Username</p>
+                    <h5>Email:</h5>
+                    <p>@Model.Email</p>
+                    <h5>Name:</h5>
+                    <p>@Model.Name @Model.MiddleName @Model.LastName</p>
+                    <h5>City:</h5>
+                    <p>@Model.City</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Graduated:</h5>
+                    <p>@Model.Graduated</p>
+                    <h5>Work:</h5>
+                    <p>@Model.Work</p>
+                    <h5>Experience:</h5>
+                    <p>@Model.Experience</p>
+                    <h5>Help I Need:</h5>
+                    <p>@Model.helpINeed</p>
+                    <h5>Help I Offer:</h5>
+                    <p>@Model.helpIOffere</p>
+                    <h5>Phone Number:</h5>
+                    <p>@Model.PhoneNumber</p>
+                </div>
+            </div>
+            <div class="text-end mt-3">
+                <a href="@Url.Action("Edit")" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>

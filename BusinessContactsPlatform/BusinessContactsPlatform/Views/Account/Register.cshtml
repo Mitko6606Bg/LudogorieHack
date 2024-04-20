@@ -1,0 +1,153 @@
+﻿@using BusinessContactsPlatform.ViewModels
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row d-flex align-items-center justify-content-center">
+    <div class="col-md-4 card p-3">
+        <h2 class="text-center text-info">Register</h2>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-1">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="MiddleName" class="control-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+                <span asp-validation-for="MiddleName" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Graduated" class="control-label"></label>
+                <input asp-for="Graduated" class="form-control" />
+                <span asp-validation-for="Graduated" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Work" class="control-label"></label>
+                <input asp-for="Work" class="form-control" />
+                <span asp-validation-for="Work" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="Experience" class="control-label"></label>
+                <div class="slider-container">
+                    <input id="experienceSlider" type="range" min="1" max="10" step="1" class="form-range" />
+                    <input id="experienceValue" type="hidden" asp-for="Experience" />
+                </div>
+                <div class="slider-labels">
+                    <div>1</div>
+                    <div>2</div>
+                    <div>3</div>
+                    <div>4</div>
+                    <div>5</div>
+                    <div>6</div>
+                    <div>7</div>
+                    <div>8</div>
+                    <div>9</div>
+                    <div>10</div>
+                </div>
+                <span asp-validation-for="Experience" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-1">
+                <label asp-for="helpINeed" class="control-label"></label>
+                <input asp-for="helpINeed" class="form-control" />
+                <span asp-validation-for="helpINeed" class="text-danger"></span>
+            </div>
+            <div class="mb-1">
+                <label asp-for="helpIOffere" class="control-label"></label>
+                <input asp-for="helpIOffere" class="form-control" />
+                <span asp-validation-for="helpIOffere" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <a asp-action="Login" class="text-decoration-none float-start mt-2">Have an account?</a>
+                </div>
+                <div>
+                    <input type="submit" value="Register" class="btn btn-primary btn-sm float-end" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .slider-container {
+        position: relative;
+    }
+
+    .slider-bubble {
+        position: absolute;
+        top: -25px;
+        width: 30px;
+        height: 30px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 12px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#experienceSlider").on("input", function () {
+            var value = $(this).val();
+            $("#experienceValue").val(value); // Update the hidden input value
+            $("#selectedExperience").text(value); // Update the displayed value
+        });
+    });
+
+
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
