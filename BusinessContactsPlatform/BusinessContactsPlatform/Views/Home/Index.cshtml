@@ -1,8 +1,26 @@
-﻿@{
+﻿@using BusinessContactsPlatform.ViewModels
+@model BusinessContactsPlatform.ViewModels.CompositeViewModel
+
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div style="position: relative;">
+    <img src="~/Images/Untitled-11.jpg" alt="Background Image" style="width: 100%; height: 700px; object-fit: cover; border-radius: 4%;">
+
+    <div style="position: absolute; top: 20px; left: 20px; color: black; font-size: 40px; font-weight: normal; font-family: 'Times New Roman', Times, serif;">
+        Make meaningful connections.<br>
+        Build lasting impact.<br>
+        The right connections.<br>
+        At the right time.
+    </div>
+</div>
+
+<div>
+    <partial name="_EventsNextWeekViewPartial" model="Model.NextWeekEvents" />
+</div>
+<div>
+    <partial name="_RandomUserSuggestionsPartial" model="Model.SearchUsersViewModel.RandomUsers" />
 </div>

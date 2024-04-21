@@ -1,0 +1,53 @@
+﻿@using BusinessContactsPlatform.ViewModels
+@model MyContactsViewModel
+
+<style>
+    .user-card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .initials {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 24px;
+        text-align: center;
+        line-height: 50px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<h2>My Contacts</h2>
+
+@if (Model.Users.Any())
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var user in Model.Users)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="user-container" onclick="window.location.href = '@Url.Action("OtherProfile", "Account", new { userId = user.Id })';">
+                        <div class="user-card">
+                            <div class="initials">@user.Name.Substring(0, 1)@user.LastName.Substring(0, 1)</div>
+                            <div>
+                                <h5>@user.Name @user.LastName</h5>
+                                <p>Email: @user.Email</p>
+                                <p>Phone Number: @user.PhoneNumber</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>No contacts found.</p>
+}

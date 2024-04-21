@@ -47,6 +47,15 @@ namespace BusinessContactsPlatform.Migrations
                     b.Property<string>("Experience")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FacebookLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookUsername")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Graduated")
                         .HasColumnType("nvarchar(max)");
 
@@ -56,7 +65,25 @@ namespace BusinessContactsPlatform.Migrations
                     b.Property<string>("HelpIOffere")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("InstagramLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramUsername")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInUsername")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -116,6 +143,33 @@ namespace BusinessContactsPlatform.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessContactsPlatform.Data.Entities.ContactRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReceiverUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactRequests");
+                });
+
             modelBuilder.Entity("BusinessContactsPlatform.Data.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -123,6 +177,9 @@ namespace BusinessContactsPlatform.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AvailableSpace")
+                        .HasColumnType("int");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -132,8 +189,16 @@ namespace BusinessContactsPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -184,6 +249,55 @@ namespace BusinessContactsPlatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserEvents");
+                });
+
+            modelBuilder.Entity("BusinessContactsPlatform.Data.Entities.SocialMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FacebookLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InstagramUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SocialMedia");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -1,0 +1,109 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@using BusinessContactsPlatform.Data.Entities
+@using BusinessContactsPlatform.Data
+@using System.Security.Claims
+
+@model List<AppUser>
+@inject AppDbContext _context
+
+<style>
+    .random-user-suggestions {
+        overflow-x: auto;
+        padding: 10px;
+    }
+
+    .user-card {
+        width: 200px; 
+        height: 300px; 
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        margin-right: 10px; 
+        display: inline-block; 
+        text-align: center; 
+    }
+
+    .initials {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .user-card-link {
+        color: inherit; 
+        text-decoration: none; 
+    }
+
+        .user-card:hover {
+            text-decoration: none; 
+            color: inherit; 
+        }
+
+    .align-left {
+        text-align: left;
+    }
+
+</style>
+
+<h1 class="display-4">Discover accounts</h1>
+
+@foreach (var user in Model)
+{
+
+    <a href="@Url.Action("OtherProfile", "Account", new { userId = user.Id })" class="user-card-link">
+        <div class="user-card p-3 mb-3">
+            
+            <div class="initials">@user.Name.Substring(0, 1)@user.LastName.Substring(0, 1)</div>
+            <div>
+                
+                <h5>@user.Name @user.LastName</h5>
+                <label class="label">Help I Need:</label>
+                <h6>@user.HelpINeed</h6>
+                <label class="label">Help I Offer:</label>
+                <h6>@user.HelpIOffere</h6>
+
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                var contactRequest = await _context.ContactRequests
+                .FirstOrDefaultAsync(cr => cr.SenderUserId == user.Id && cr.ReceiverUserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (contactRequest != null && contactRequest.Status == ContactRequestStatus.Accepted)
+                {
+                    <button type="button" class="btn btn-secondary contact-button ms-auto" disabled>Connected</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-primary contact-button ms-auto" onclick="sendContactRequest('@user.Id')">Contact</button>
+                }
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account")" class="btn btn-primary mt-3">Contact</a>
+            }
+        </div>
+    </a>
+}
+
+<script>
+    function sendContactRequest(receiverId) {
+        $.ajax({
+            url: '@Url.Action("SendContactRequest", "Contact")',
+            type: 'POST',
+            data: { receiverId: receiverId },
+            success: function () {
+                alert('Contact request sent successfully!');
+            },
+            error: function () {
+                alert('Failed to send contact request.');
+            }
+        });
+    }
+</script>

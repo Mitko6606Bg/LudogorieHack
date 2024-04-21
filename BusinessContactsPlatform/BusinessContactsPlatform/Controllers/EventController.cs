@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessContactsPlatform.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using static System.Net.Mime.MediaTypeNames;
+using System.Security.Claims;
 
 namespace BusinessContactsPlatform.Controllers
 {
@@ -24,6 +27,18 @@ namespace BusinessContactsPlatform.Controllers
             return View(_context.Events.ToList());
         }
 
+        [Authorize]
+        public async Task<IActionResult> MyEvents()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var myEvents = await _context.Events
+                .Where(e => e.Organizer == user.Id)
+                .ToListAsync();
+
+            return View(myEvents);
+        }
+
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -42,6 +57,10 @@ namespace BusinessContactsPlatform.Controllers
                 return NotFound();
             }
 
+            var imageBase64 = Convert.ToBase64String(@event.Image);
+            var imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64);
+            ViewBag.ImageDataURL = imageDataURL;
+
             return View(@event);
         }
 
@@ -59,6 +78,19 @@ namespace BusinessContactsPlatform.Controllers
 
             if (ModelState.IsValid)
             {
+                byte[] imageData = null;
+                if (model.Image != null && model.Image.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await model.Image.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+                }
+
+                TimeSpan duration = model.EndDateTime - model.StartDateTime;
+                string durationString = $"{(int)duration.TotalDays} days and {(int)duration.Hours} hours";
+
                 var @event = new Event
                 {
                     Title = model.Title,
@@ -69,13 +101,17 @@ namespace BusinessContactsPlatform.Controllers
                     OnlineLink = model.OnlineLink,
                     Organizer = user.Id,
                     Category = model.Category,
-                    Price = model.Price
+                    Price = model.Price,
+                    AvailableSpace = model.AvailableSpace,
+                    Image = imageData,
+                    Duration = durationString
                 };
 
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(model);
         }
 
@@ -92,7 +128,8 @@ namespace BusinessContactsPlatform.Controllers
                 return NotFound();
             }
 
-            var model = new EventViewModel
+
+            var model = new EventEditViewModel
             {
                 Title = @event.Title,
                 Description = @event.Description,
@@ -101,7 +138,10 @@ namespace BusinessContactsPlatform.Controllers
                 Location = @event.Location,
                 OnlineLink = @event.OnlineLink,
                 Category = @event.Category,
-                Price = @event.Price
+                Price = @event.Price,
+                AvailableSpace = @event.AvailableSpace,
+                Image = @event.Image,
+                Duration = @event.Duration,
             };
 
             return View(model);
@@ -109,7 +149,7 @@ namespace BusinessContactsPlatform.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventViewModel model)
+        public async Task<IActionResult> Edit(int id, EventEditViewModel model)
         {
             if (id != model.Id)
             {
@@ -124,6 +164,9 @@ namespace BusinessContactsPlatform.Controllers
                     return NotFound();
                 }
 
+                TimeSpan duration = model.EndDateTime - model.StartDateTime;
+                string durationString = $"{(int)duration.TotalDays} days and {(int)duration.Hours} hours";
+
                 @event.Title = model.Title;
                 @event.Description = model.Description;
                 @event.StartDateTime = model.StartDateTime;
@@ -132,6 +175,9 @@ namespace BusinessContactsPlatform.Controllers
                 @event.OnlineLink = model.OnlineLink;
                 @event.Category = model.Category;
                 @event.Price = model.Price;
+                @event.AvailableSpace = model.AvailableSpace;
+                @event.Image = model.Image;
+                @event.Duration = durationString;
 
                 _context.Update(@event);
                 await _context.SaveChangesAsync();
@@ -168,11 +214,6 @@ namespace BusinessContactsPlatform.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //private bool EventExists(int id)
-        //{
-        //    return _context.Events.Any(e => e.Id == id);
-        //}
-
         public async Task<IActionResult> Join(int? id)
         {
             if (id == null)
@@ -194,7 +235,7 @@ namespace BusinessContactsPlatform.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Check if the user is already joined the event
+            
             var alreadyJoined = await _context.UserEvents
                 .AnyAsync(eu => eu.EventId == id && eu.UserId == user.Id);
 
@@ -203,6 +244,16 @@ namespace BusinessContactsPlatform.Controllers
                 TempData["Message"] = "You are already joined this event.";
                 return RedirectToAction("Details", new { id = id });
             }
+
+            
+            if (@event.AvailableSpace <= 0)
+            {
+                TempData["Message"] = "Sorry, there is no available space for this event.";
+                return RedirectToAction("Details", new { id = id });
+            }
+
+            
+            @event.AvailableSpace -= 1;
 
             var eventUser = new EventUser
             {
@@ -217,5 +268,42 @@ namespace BusinessContactsPlatform.Controllers
 
             return RedirectToAction("Details", new { id = id });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+
+            var eventUser = await _context.UserEvents
+                .FirstOrDefaultAsync(eu => eu.EventId == id && eu.UserId == userId);
+
+            if (eventUser == null)
+            {
+                TempData["Message"] = "You are not joined this event.";
+                return RedirectToAction("Details", new { id = id });
+            }
+
+            _context.UserEvents.Remove(eventUser);
+
+            @event.AvailableSpace++;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "You have successfully left the event.";
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
     }
 }

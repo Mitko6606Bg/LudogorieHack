@@ -1,0 +1,117 @@
+﻿@using BusinessContactsPlatform.Data.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> _userManager;
+
+@{
+    var user = await _userManager.GetUserAsync(User);
+}
+
+<style>
+    .event-card {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        height: auto; /* Adjust the height as needed */
+    }
+
+    .event-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .event-image {
+        max-width: 100%; /* Ensure the image doesn't exceed the width of its container */
+        width: 150%; /* Increase the width of the image */
+        height: auto; /* Allow the image to adjust its height while maintaining aspect ratio */
+        transition: transform 0.3s ease;
+    }
+
+        .event-image:hover {
+            transform: scale(1.1);
+        }
+
+    .event-details {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 20px;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .event-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .event-date,
+    .event-location {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .button-group {
+        margin-top: 20px;
+    }
+
+        .button-group .btn {
+            margin-right: 10px;
+        }
+
+            .button-group .btn:last-child {
+                margin-right: 0;
+            }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="display-4">Events in the Next Week</h1>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var isFull = item.AvailableSpace == 0;
+            <div class="col-md-4 mb-3">
+                <div class="event-card">
+                    <div class="event-image-container">
+                        @if (item.Image != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Image)" alt="Event Image" class="event-image" />
+                        }
+                        <div class="event-details">
+                            <h5 class="event-title">@item.Title</h5>
+                            <p class="event-date">Start Date: @item.StartDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                            <p class="event-date">End Date: @item.EndDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                            <p class="event-location">Location: @item.Location</p>
+                            <div class="button-group">
+                                @if (user != null && user.Id == item.Organizer)
+                                {
+                                    <a href="@Url.Action("Edit", "Event", new { id = item.Id })" class="btn btn-primary">Edit</a>
+                                    <a href="@Url.Action("Details", "Event", new { id = item.Id })" class="btn btn-primary">View</a>
+                                }
+                                else if (isFull)
+                                {
+                                    <button type="button" class="btn btn-danger" disabled>Join (Full)</button>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Join", "Event", new { id = item.Id })" class="btn btn-primary">Join</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

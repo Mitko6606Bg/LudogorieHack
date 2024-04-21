@@ -1,44 +1,327 @@
 ﻿@model BusinessContactsPlatform.Data.Entities.Event
-
-<h2>Event Details</h2>
-
-<div>
-    <h4>Title: @Model.Title</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
-
-        <dt class="col-sm-2">Start Date</dt>
-        <dd class="col-sm-10">@Model.StartDateTime.ToString("yyyy-MM-dd HH:mm")</dd>
-
-        <dt class="col-sm-2">End Date</dt>
-        <dd class="col-sm-10">@Model.EndDateTime.ToString("yyyy-MM-dd HH:mm")</dd>
-
-        <dt class="col-sm-2">Location</dt>
-        <dd class="col-sm-10">@Model.Location</dd>
-
-        <dt class="col-sm-2">Online Link</dt>
-        <dd class="col-sm-10"><a href="@Model.OnlineLink">@Model.OnlineLink</a></dd>
+@using System.Security.Claims
 
 
-        <dt class="col-sm-2">Category</dt>
-        <dd class="col-sm-10">@Model.Category</dd>
 
-        <dt class="col-sm-2">Price</dt>
-        <dd class="col-sm-10">@Model.Price.ToString("C")</dd>
-    </dl>
-    <div>
-        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Edit", new { id = Model.Id })'">Edit</button>
-        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index")'">Back to List</button>
+<style>
+    <style >
+    .event-details {
+        position: relative;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .event-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .event-description {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .event-info-item {
+        margin-bottom: 15px;
+    }
+
+    .event-info-label {
+        font-weight: bold;
+    }
+
+    .event-image-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-image {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+        .event-image:hover {
+            transform: scale(1.1);
+        }
+
+    .event-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+        .event-overlay:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+    .join-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: transparent;
+        border: 2px solid #fff;
+        color: #fff;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .join-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #000;
+        }
+
+    .leave-button {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        text-transform: uppercase;
+    }
+
+    .filter-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .filter-container input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .filter-container button {
+            margin-left: 10px;
+        }
+
+    .user-card {
+        width: 200px;
+        height: auto;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-right: 10px;
+        display: inline-block;
+        text-align: center;
+        background-color: #fff;
+        cursor: pointer; /* Set cursor to pointer */
+        background-color: #f0f0f0; /* Change background color */
+    }
+
+    .initials {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
+        margin: 0 auto; /* Center the initials horizontally */
+    }
+
+    .user-card h5 {
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-size: 18px;
+        color: inherit !important; /* Inherit text color */
+        text-decoration: none !important; /* Remove underline */
+    }
+
+    .user-card p {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 0;
+    }
+
+    .user-container {
+        width: 200px;
+        height: auto;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-right: 10px;
+        display: inline-block;
+        text-align: center;
+        background-color: #fff;
+        cursor: pointer; /* Set cursor to pointer */
+        background-color: #f0f0f0; /* Change background color */
+    }
+
+    .user-container {
+        text-decoration: none; /* Remove underline */
+        color: inherit; /* Inherit text color */
+
+    }
+
+    .user-container:hover {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        transition: box-shadow 0.3s ease;
+        background-color: #f0f0f0; /* Change background color */
+    }
+</style>
+
+</style>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info" role="alert">@TempData["Message"]</div>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="event-image-container">
+                @if (ViewBag.ImageDataURL != null)
+                {
+                    <img src="@ViewBag.ImageDataURL" alt="Event Image" class="event-image" />
+                }
+                <div class="event-overlay">
+                    <h2 class="event-title">@Model.Title</h2>
+                    <p class="event-description">@Html.Raw(Model.Description)</p>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Start Date:</span>
+                        <span>@Model.StartDateTime.ToString("yyyy-MM-dd HH:mm")</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">End Date:</span>
+                        <span>@Model.EndDateTime.ToString("yyyy-MM-dd HH:mm")</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Duration:</span>
+                        <span>@Model.Duration</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Location:</span>
+                        <span>@Model.Location</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Online Link:</span>
+                        <a href="@Model.OnlineLink">@Model.OnlineLink</a>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Category:</span>
+                        <span>@Model.Category</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Available Space:</span>
+                        <span>@Model.AvailableSpace</span>
+                    </div>
+                    <div class="event-info-item">
+                        <span class="event-info-label">Price:</span>
+                        <span>@Model.Price.ToString("C")</span>
+                    </div>
+                    @if (Model.AvailableSpace > 0)
+                    {
+                        <form asp-action="Join" asp-route-id="@Model.Id">
+                            <button type="submit" class="btn btn-primary">Join</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" disabled>Join (Full)</button>
+                    }
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var alreadyJoined = Model.EventUsers.Any(eu => eu.UserId == userId);
+                        if (alreadyJoined)
+                        {
+                            <form asp-action="Leave" asp-route-id="@Model.Id">
+                                <button type="submit" class="btn btn-danger">Leave</button>
+                            </form>
+                        }
+                    }
+                </div>
+            </div>
+
+            <h3>Users Attending</h3>
+            <div class="random-user-suggestions">
+                <div class="filter-container">
+                    <input type="text" id="nameFilter" placeholder="Filter by name">
+                    <input type="text" id="needFilter" placeholder="Filter by need">
+                    <input type="text" id="offerFilter" placeholder="Filter by offer">
+                    <button class="btn btn-primary" onclick="filterUsers()">Filter</button>
+                    <button class="btn btn-danger" onclick="resetFilters()">
+                        <img src="~/Images/Icons/close-512.webp" alt="Reset Filter" width="20" height="20">
+                    </button>
+                </div>
+
+                @foreach (var eventUser in Model.EventUsers)
+                {
+                    if ((!string.IsNullOrEmpty(eventUser.User.Name) && eventUser.User.Name.Contains(ViewBag.NameFilter ?? ""))
+                    && (!string.IsNullOrEmpty(eventUser.User.HelpINeed) && eventUser.User.HelpINeed.Contains(ViewBag.HelpINeedFilter ?? ""))
+                    && (!string.IsNullOrEmpty(eventUser.User.HelpIOffere) && eventUser.User.HelpIOffere.Contains(ViewBag.HelpIOffereFilter ?? "")))
+                    {
+                        <a href="@Url.Action("OtherProfile", "Account", new { userId = eventUser.User.Id })" class="user-container p-3 mb-3">
+                            <!-- Display user's initials -->
+                            <div class="initials text-center">@eventUser.User.Name.Substring(0, 1)@eventUser.User.LastName.Substring(0, 1)</div>
+                            <div>
+                                <!-- Display user's name and last name -->
+                                <h5>@eventUser.User.Name @eventUser.User.LastName</h5>
+                                <!-- Display user's HelpINeed -->
+                                <p><strong>Help I Need:</strong> @eventUser.User.HelpINeed</p>
+                                <!-- Display user's HelpIOffere -->
+                                <p><strong>Help I Offer:</strong> @eventUser.User.HelpIOffere</p>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
     </div>
-
 </div>
 
-<h3>Users Attending</h3>
-<ul>
-    @foreach (var eventUser in Model.EventUsers)
-    {
-        <li>@eventUser.User.UserName</li>
+<script>
+    function filterUsers() {
+        var nameFilter = document.getElementById("nameFilter").value.toLowerCase();
+        var needFilter = document.getElementById("needFilter").value.toLowerCase();
+        var offerFilter = document.getElementById("offerFilter").value.toLowerCase();
+
+        var userCards = document.querySelectorAll(".random-user-suggestions .user-card");
+
+        userCards.forEach(function (userCard) {
+            var userName = userCard.querySelector("h5").innerText.toLowerCase();
+            var userNeed = userCard.querySelectorAll("p")[0].innerText.toLowerCase();
+            var userOffer = userCard.querySelectorAll("p")[1].innerText.toLowerCase();
+
+            if (userName.includes(nameFilter) && userNeed.includes(needFilter) && userOffer.includes(offerFilter)) {
+                userCard.style.display = "inline-block";
+            } else {
+                userCard.style.display = "none";
+            }
+        });
     }
-</ul>
+
+    function resetFilters() {
+        document.getElementById("nameFilter").value = "";
+        document.getElementById("needFilter").value = "";
+        document.getElementById("offerFilter").value = "";
+        filterUsers(); // Call the filter function to reset the display
+    }
+</script>

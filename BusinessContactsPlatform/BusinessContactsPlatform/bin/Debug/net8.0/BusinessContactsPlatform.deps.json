@@ -12,7 +12,8 @@
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.4",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.4",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.4",
-          "MimeKit": "4.5.0"
+          "MimeKit": "4.5.0",
+          "TinyMCE": "7.0.1"
         },
         "runtime": {
           "BusinessContactsPlatform.dll": {}
@@ -957,7 +958,8 @@
             "fileVersion": "6.0.21.52210"
           }
         }
-      }
+      },
+      "TinyMCE/7.0.1": {}
     }
   },
   "libraries": {
@@ -1560,6 +1562,13 @@
       "sha512": "sha512-IXoJOXIqc39AIe+CIR7koBtRGMiCt/LPM3lI+PELtDIy9XdyeSrwXFdWV9dzJ2Awl0paLWUaknLxFQ5HpHZUog==",
       "path": "system.windows.extensions/6.0.0",
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
+    },
+    "TinyMCE/7.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zmcj3jlDms2voDkbOmpHsbr6MoM0+/DfwYyBNy2o6ArGlYNBxHyRuNLg2oPfciRJaEGyPgzHw30OlqMxJjY5/Q==",
+      "path": "tinymce/7.0.1",
+      "hashPath": "tinymce.7.0.1.nupkg.sha512"
     }
   }
 }

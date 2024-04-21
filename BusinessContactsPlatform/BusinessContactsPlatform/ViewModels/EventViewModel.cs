@@ -22,6 +22,12 @@ namespace BusinessContactsPlatform.ViewModels
 
         public string Category { get; set; }
 
+        [Display(Name = "Available Space")]
+        [Required(ErrorMessage = "Please enter the available space.")]
+        public int AvailableSpace {  get; set; }
+
+        public IFormFile Image { get; set; }
+
         [Required]
         public decimal Price { get; set; }
     }
