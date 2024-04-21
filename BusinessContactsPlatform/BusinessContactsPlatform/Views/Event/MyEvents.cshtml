@@ -1,0 +1,30 @@
+﻿@using BusinessContactsPlatform.Data.Entities
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<BusinessContactsPlatform.Data.Entities.Event>
+
+<h2>My Events</h2>
+
+<p>
+    <a asp-action="Create">
+        <button type="button" class="btn btn-primary">Create New</button>
+    </a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card rounded">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">Start Date: @item.StartDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                    <p class="card-text">End Date: @item.EndDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                    <p class="card-text">Location: @item.Location</p>
+                    <a href="@Url.Action("Edit", "Event", new { id = item.Id })" class="btn btn-primary">Edit</a>
+                    <a href="@Url.Action("Details", "Event", new { id = item.Id })" class="btn btn-primary">View</a>
+                    
+                </div>
+            </div>
+        </div>
+    }
+</div>

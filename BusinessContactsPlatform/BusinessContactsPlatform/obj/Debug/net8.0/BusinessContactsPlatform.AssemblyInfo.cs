@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BusinessContactsPlatform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a413f089e5fc1ac6ed038f6081ad1a82aa1777fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d1efe2dd16cc6015a2d6af9cebf671d767602c0")]
 [assembly: System.Reflection.AssemblyProductAttribute("BusinessContactsPlatform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BusinessContactsPlatform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

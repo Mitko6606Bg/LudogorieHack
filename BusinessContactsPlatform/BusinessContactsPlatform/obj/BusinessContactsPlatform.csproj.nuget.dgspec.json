@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mitko\\Documents\\repository\\IT-Career\\FlightManager\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj": {}
+    "C:\\Users\\Mitko\\Documents\\repository\\LudogorieHack\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mitko\\Documents\\repository\\IT-Career\\FlightManager\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj": {
+    "C:\\Users\\Mitko\\Documents\\repository\\LudogorieHack\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mitko\\Documents\\repository\\IT-Career\\FlightManager\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj",
+        "projectUniqueName": "C:\\Users\\Mitko\\Documents\\repository\\LudogorieHack\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj",
         "projectName": "BusinessContactsPlatform",
-        "projectPath": "C:\\Users\\Mitko\\Documents\\repository\\IT-Career\\FlightManager\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj",
+        "projectPath": "C:\\Users\\Mitko\\Documents\\repository\\LudogorieHack\\BusinessContactsPlatform\\BusinessContactsPlatform\\BusinessContactsPlatform.csproj",
         "packagesPath": "C:\\Users\\Mitko\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mitko\\Documents\\repository\\IT-Career\\FlightManager\\BusinessContactsPlatform\\BusinessContactsPlatform\\obj\\",
+        "outputPath": "C:\\Users\\Mitko\\Documents\\repository\\LudogorieHack\\BusinessContactsPlatform\\BusinessContactsPlatform\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "F:\\Program Files\\Visual studio 3\\NuGetPackages"
@@ -71,6 +71,10 @@
             "MimeKit": {
               "target": "Package",
               "version": "[4.5.0, )"
+            },
+            "TinyMCE": {
+              "target": "Package",
+              "version": "[7.0.1, )"
             }
           },
           "imports": [

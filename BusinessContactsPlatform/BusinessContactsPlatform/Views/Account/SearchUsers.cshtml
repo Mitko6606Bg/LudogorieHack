@@ -1,0 +1,136 @@
+﻿@using BusinessContactsPlatform.ViewModels
+@model SearchUsersViewModel
+
+<style>
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 100px;
+    }
+
+    .search-card {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+        .user-container:hover {
+            transform: scale(1.02);
+        }
+
+    .user-card {
+        width: 100%;
+        max-width: 550px; /* Adjust as needed */
+        border-radius: 10px;
+        padding: 15px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-details {
+        flex-grow: 1;
+    }
+
+    .contact-button {
+        margin-left: auto;
+        margin-right: 15px;
+        width: 85px;
+    }
+
+    .user-container h5 {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+    .user-container:hover .user-card {
+        cursor: pointer;
+        background-color: #f0f0f0;
+    }
+</style>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 search-container">
+            <div class="search-card p-4">
+                <h2 class="text-center mb-4">Search Users</h2>
+                <form asp-action="SearchUsers" method="post">
+                    <div class="input-group mb-3">
+                        <input asp-for="Username" class="form-control" placeholder="Enter username">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Users != null && Model.Users.Any())
+    {
+        <div class="row justify-content-center">
+            @foreach (var user in Model.Users)
+            {
+                <div class="col-md-4">
+                    <div class="user-container" onclick="window.location.href = '@Url.Action("OtherProfile", "Account", new { userId = user.Id })';">
+                        <div class="user-card p-3 mb-3 d-flex align-items-center">
+                            <div class="user-details">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <!-- If user has a profile picture, display it in a circular shape -->
+                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <span>@user.UserName.Substring(0, 1)</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5>@user.UserName</h5>
+                                        <!-- Display other user properties as needed -->
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary contact-button ms-auto" onclick="sendContactRequest('@user.Id')">Contact</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Username) && Model.Users != null && !Model.Users.Any())
+    {
+        <div class="row justify-content-center">
+            <p class="text-center mt-4">No users found.</p>
+        </div>
+    }
+</div>
+
+<script>
+    sessionStorage.setItem('previousPageUrl', window.location.href);
+
+    function sendContactRequest(receiverId) {
+        $.ajax({
+            url: '@Url.Action("SendContactRequest", "Contact")',
+            type: 'POST',
+            data: { receiverId: receiverId },
+            success: function () {
+                alert('Contact request sent successfully!');
+            },
+            error: function () {
+                alert('Failed to send contact request.');
+            }
+        });
+    }
+</script>

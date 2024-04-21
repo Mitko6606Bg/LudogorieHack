@@ -11,6 +11,8 @@ namespace BusinessContactsPlatform.Data
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventUser> UserEvents { get; set; }
+        public DbSet<ContactRequest> ContactRequests { get; set; }
+        public DbSet<SocialMedia> SocialMedia { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,9 +23,9 @@ namespace BusinessContactsPlatform.Data
                 .HasColumnType("decimal(18, 2)");
 
             modelBuilder.Entity<Event>()
-                .HasMany(e => e.EventUsers) // An Event can have many EventUsers
-                .WithOne(eu => eu.Event) // An EventUser belongs to only one Event
-                .HasForeignKey(eu => eu.EventId); // Define the foreign key property name in the EventUser entity
+                .HasMany(e => e.EventUsers)
+                .WithOne(eu => eu.Event)
+                .HasForeignKey(eu => eu.EventId);
         }
     }
 }

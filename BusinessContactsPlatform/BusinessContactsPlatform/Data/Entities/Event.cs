@@ -12,6 +12,9 @@
         public string Organizer { get; set; }
         public string Category { get; set; }
         public decimal Price { get; set; }
+        public int AvailableSpace { get; set; }
+        public string Duration { get; set; }
+        public byte[] Image { get; set; }
 
         public ICollection<EventUser> EventUsers { get; set; }
     }

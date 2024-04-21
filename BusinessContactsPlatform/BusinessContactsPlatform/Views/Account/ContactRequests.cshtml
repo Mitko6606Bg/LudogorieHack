@@ -1,0 +1,71 @@
+﻿@using BusinessContactsPlatform.ViewModels
+@model List<ContactRequestViewModel>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .contact-request-container {
+        margin: 10px;
+        padding: 10px;
+        border-radius: 10px; /* Adjust border-radius for rounded edges */
+        background-color: #f0f0f0; /* Add background color */
+        width: 400px; /* Adjust width as needed */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .user-container {
+        padding: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px; /* Adjust spacing between buttons as needed */
+    }
+
+
+
+</style>
+
+
+<div class="container">
+    <div class="header">
+        <h2>Contact Requests</h2>
+    </div>
+    <div class="requests">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var request in Model)
+            {
+                <div class="contact-request-container">
+                    <div class="user-container">
+                        <p>@request.SenderUsername</p>
+                    </div>
+                    <div class="action-buttons">
+                        <form asp-action="AcceptContactRequest" asp-controller="Contact" method="post">
+                            <input type="hidden" name="requestId" value="@request.Id" />
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                        <form asp-action="DeclineContactRequest" asp-controller="Contact" method="post">
+                            <input type="hidden" name="requestId" value="@request.Id" />
+                            <button type="submit" class="btn btn-danger">Decline</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No contact requests found.</p>
+        }
+    </div>
+</div>

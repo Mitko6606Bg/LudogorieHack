@@ -5,34 +5,161 @@
 @{
     var user = await _userManager.GetUserAsync(User);
 }
+
+<style>
+    .event-card {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .event-image {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+        .event-image:hover {
+            transform: scale(1.1);
+        }
+
+    .event-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .event-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .event-date, .event-location {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .button-group {
+        margin-top: 20px;
+    }
+
+        .button-group .btn {
+            margin-right: 10px;
+        }
+
+            .button-group .btn:last-child {
+                margin-right: 0;
+            }
+
+</style>
+
+
 <h2>Events</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">
+        <button type="button" class="btn btn-primary">Add Event</button>
+    </a>
 </p>
 
-<div class="row">
-    @foreach (var item in Model)
-    {
+<div class="container">
+
+    <div class="row">
         <div class="col-md-4 mb-3">
-            <div class="card rounded">
-                <div class="card-body">
-                    <h5 class="card-title">@item.Title</h5>
-                    <p class="card-text">Start Date: @item.StartDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
-                    <p class="card-text">End Date: @item.EndDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
-                    <p class="card-text">Location: @item.Location</p>
-                    @if (user.Id == item.Organizer)
-                    {
-                        <a href="@Url.Action("Edit", "Event", new { id = item.Id })" class="btn btn-primary">Edit</a>
-                        <a href="@Url.Action("Details", "Event", new { id = item.Id })" class="btn btn-primary">View</a> 
-                        <a href="@Url.Action("Join", "Event", new { id = item.Id })" class="btn btn-primary">Join</a>
-                    }
-                    else
-                    {
-                        <a href="#" class="btn btn-success">Join</a>
-                    }
+            <input id="locationFilter" type="text" class="form-control" placeholder="Filter by Location" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <input id="categoryFilter" type="text" class="form-control" placeholder="Filter by Category" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <button type="button" class="btn btn-primary" onclick="filterEvents()">Filter</button>
+            <button type="button" class="btn btn-secondary" onclick="resetFilters()">Clear</button>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var isFull = item.AvailableSpace == 0;
+            <div class="col-md-4 mb-3">
+                <div class="event-card">
+                    <div class="event-image-container">
+                        @if (item.Image != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Image)" alt="Event Image" class="event-image" />
+                        }
+                        <div class="event-overlay">
+                            <h5 class="event-title">@item.Title</h5>
+                            <p class="event-date">Start Date: @item.StartDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                            <p class="event-date">End Date: @item.EndDateTime.ToString("MM/dd/yyyy hh:mm tt")</p>
+                            <p class="event-location">Location: @item.Location</p>
+                            <!-- Add the category information here -->
+                            <p class="event-category">Category: @item.Category</p>
+                            <div class="button-group">
+                                @if (user.Id == item.Organizer)
+                                {
+                                    <a href="@Url.Action("Edit", "Event", new { id = item.Id })" class="btn btn-primary">Edit</a>
+                                    <a href="@Url.Action("Details", "Event", new { id = item.Id })" class="btn btn-primary">View</a>
+                                }
+                                else if (isFull)
+                                {
+                                    <button type="button" class="btn btn-danger" disabled>Join (Full)</button>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Join", "Event", new { id = item.Id })" class="btn btn-primary">Join</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
+
+<script>
+    function filterEvents() {
+        var locationFilter = document.getElementById("locationFilter").value.toLowerCase();
+        var categoryFilter = document.getElementById("categoryFilter").value.toLowerCase();
+
+        var eventCards = document.querySelectorAll(".event-card");
+
+        eventCards.forEach(function (eventCard) {
+            var eventLocation = eventCard.querySelector(".event-location").innerText.toLowerCase();
+            var eventCategory = eventCard.querySelector(".event-category").innerText.toLowerCase();
+
+            if (eventLocation.includes(locationFilter) && eventCategory.includes(categoryFilter)) {
+                eventCard.style.display = "inline-block";
+            } else {
+                eventCard.style.display = "none";
+            }
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById("locationFilter").value = "";
+        document.getElementById("categoryFilter").value = "";
+        filterEvents();
+    }
+
+</script>

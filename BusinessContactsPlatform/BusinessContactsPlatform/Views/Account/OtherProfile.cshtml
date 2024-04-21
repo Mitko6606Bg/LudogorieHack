@@ -1,0 +1,253 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@using System.Security.Claims;
+@using BusinessContactsPlatform.Data.Entities
+@using BusinessContactsPlatform.Data
+@using BusinessContactsPlatform.ViewModels
+@inject AppDbContext _context
+@model AccountViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+       
+        .profile-card {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        .initials {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .info-label {
+            font-weight: bold;
+        }
+
+        .info-text {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .contact-button-container {
+            text-align: center;
+        }
+
+        .contact-button {
+            margin-top: 20px;
+            width: 120px;
+        }
+
+        .social-media-icon img {
+            width: auto;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+
+<div class="container">
+    <div class="profile-card">
+        <h2 class="card-title text-center">Profile</h2>
+        <div class="initials">
+            <span>@Model.Name.Substring(0, 1)@Model.LastName.Substring(0, 1)</span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-label">Username:</div>
+                <div class="info-text">@Model.Username</div>
+
+                <div class="info-label">Email:</div>
+                <div class="info-text">@Model.Email</div>
+
+                <div class="info-label">Name:</div>
+                <div class="info-text">@Model.Name @Model.MiddleName @Model.LastName</div>
+
+                <div class="info-label">City:</div>
+                <div class="info-text">@Model.City</div>
+
+                <div class="info-label">Phone Number:</div>
+                <div class="info-text">@Model.PhoneNumber</div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-label">Graduated:</div>
+                <div class="info-text">@Model.Graduated</div>
+
+                <div class="info-label">Work:</div>
+                <div class="info-text">@Model.Work</div>
+
+                <div class="info-label">Experience:</div>
+                <div class="info-text">@Model.Experience</div>
+
+                <div class="info-label">Help I Need:</div>
+                <div class="info-text">@Model.helpINeed</div>
+
+                <div class="info-label">Help I Offer:</div>
+                <div class="info-text">@Model.helpIOffere</div>
+            </div>
+        </div>
+
+        <div class="contact-button-container">
+            @if (User.Identity.IsAuthenticated)
+            {
+                var sentRequest = await _context.ContactRequests
+                .FirstOrDefaultAsync(cr => cr.SenderUserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && cr.ReceiverUserId == Model.Id);
+
+                var receivedRequest = await _context.ContactRequests
+                .FirstOrDefaultAsync(cr => cr.SenderUserId == Model.Id && cr.ReceiverUserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (sentRequest != null && sentRequest.Status == ContactRequestStatus.Accepted)
+                {
+                    <button type="button" class="btn btn-secondary contact-button" disabled>Connected</button>
+
+                    <div class="social-media-section">
+                        <h4 class="text-center">Social Media</h4>
+                        <div class="mb-3">
+                            <label class="control-label">LinkedIn</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/linckedin.png" alt="LinkedIn" /></span>
+                                <input asp-for="LinkedInNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="LinkedInUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="LinkedInLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="control-label">Instagram</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/Instagram.png" alt="Instagram" /></span>
+                                <input asp-for="InstagramNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="InstagramUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="InstagramLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="control-label">Facebook</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/facebook.png" alt="Facebook" /></span>
+                                <input asp-for="FacebookNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="FacebookUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="FacebookLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                    </div>
+                }
+                else if (receivedRequest != null && receivedRequest.Status == ContactRequestStatus.Accepted)
+                {
+                    <button type="button" class="btn btn-secondary contact-button" disabled>Connected</button>
+
+                    <div class="social-media-section">
+                        <h4 class="text-center">Social Media</h4>
+                        <div class="mb-3">
+                            <label class="control-label">LinkedIn</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/linckedin.png" alt="LinkedIn" /></span>
+                                <input asp-for="LinkedInNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="LinkedInUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="LinkedInLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="control-label">Instagram</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/Instagram.png" alt="Instagram" /></span>
+                                <input asp-for="InstagramNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="InstagramUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="InstagramLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="control-label">Facebook</label>
+                            <div class="input-group">
+                                <span class="input-group-text social-media-icon"><img src="~/Images/Icons/facebook.png" alt="Facebook" /></span>
+                                <input asp-for="FacebookNames" class="form-control" placeholder="Names" />
+                            </div>
+                            <input asp-for="FacebookUsername" class="form-control mb-2" placeholder="Username" />
+                            <input asp-for="FacebookLink" class="form-control" placeholder="Link" />
+                        </div>
+
+
+                    </div>
+                }
+                else
+                {
+                    if (sentRequest != null && sentRequest.Status == ContactRequestStatus.Pending)
+                    {
+                        <button type="button" class="btn btn-secondary contact-button" disabled>Pending</button>
+
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary contact-button" onclick="sendContactRequest('@Model.Id')">Contact</button>
+
+                    }
+                }
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account")" class="btn btn-primary mt-3">Contact</a>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function goBack() {
+            var previousPageUrl = sessionStorage.getItem('previousPageUrl');
+
+            if (previousPageUrl) {
+                window.location.href = previousPageUrl;
+            } else {
+                window.history.back();
+            }
+        }
+
+        function sendContactRequest(receiverId) {
+            $.ajax({
+                url: '@Url.Action("SendContactRequest", "Contact")',
+                type: 'POST',
+                data: { receiverId: receiverId },
+                success: function () {
+                    alert('Contact request sent successfully!');
+                },
+                error: function () {
+                    alert('Failed to send contact request.');
+                }
+            });
+        }
+
+    </script>
+}
